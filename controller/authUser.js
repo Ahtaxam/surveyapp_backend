@@ -2,7 +2,7 @@ const User = require("../models/user");
 const joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../config/enviornment-variable");
+const config = require("../config/config");
 
 const authUser = async (req, res) => {
   const result = validateUser(req.body);
