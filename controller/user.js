@@ -31,9 +31,7 @@ const createUser = async (req, res) => {
 };
 
 function validateUser(user) {
-  let name = user.name;
-  let email = user.email;
-  let password = user.password;
+  const { name, email, password } = user;
 
   const schema = joi.object({
     name: joi.string().required(),
@@ -41,7 +39,7 @@ function validateUser(user) {
     password: joi.string().min(8).required(),
   });
 
-  return schema.validate({ name: name, email: email, password: password });
+  return schema.validate({ name, email, password });
 }
 
 module.exports = createUser;
