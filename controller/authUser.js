@@ -29,6 +29,7 @@ const authUser = async (req, res) => {
       .send({
         message: "Login Successsfully...",
         email: user.email,
+        name: user.name,
         token: token,
       });
   }
