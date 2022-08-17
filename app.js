@@ -1,11 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const signUpUsers = require("./router/user");
-const loginuUser = require("./router/Auth");
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const app = express();
-const port = process.env.PORT || 3000;
-const url = "mongodb://localhost/surveyapp";
+
+const signUpUsers = require("./router/user");
+const loginuUser = require("./router/Auth");
+const port = process.env.PORT || 8000;
+const url = process.env.dbUrl;
 const cors = require("cors");
 
 app.use(express.json());
