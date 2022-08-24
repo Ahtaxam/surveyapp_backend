@@ -26,11 +26,12 @@ const createSurvey = async (req, res) => {
     res.status(400).json(result.error.details[0].message);
     return;
   }
-  const { name, description, questions } = req.body;
+  const { name, description, questions, isPublic } = req.body;
   const survey = new Survey({
     name,
     description,
     questions,
+    isPublic,
     userId: req.user._id,
   });
 
@@ -57,10 +58,11 @@ const updateSurvey = async (req, res) => {
 
     if (!survey) return res.status(404).json({ message: "Survey not found" });
 
-    const { name, description, questions } = req.body;
+    const { name, description, questions, isPublic } = req.body;
     survey.name = name;
     survey.description = description;
     survey.questions = questions;
+    survey.isPublic = isPublic;
     const updatedSurvey = await survey.save();
     res.status(200).json({
       message: "Survey updated successfully",
@@ -87,11 +89,12 @@ const deleteSurvey = async (req, res) => {
 
 // joi schema  to validate survey
 function validateSurvey(survey) {
-  const { name, description, questions } = survey;
+  const { name, description, questions, isPublic } = survey;
 
   const schema = joi.object({
     name: joi.string().required(),
     description: joi.string().required(),
+    isPublic: joi.boolean(),
     questions: joi.array().items(
       joi.object({
         title: joi.string().required(),
@@ -108,7 +111,7 @@ function validateSurvey(survey) {
     ),
   });
 
-  return schema.validate({ name, description, questions });
+  return schema.validate({ name, description, questions, isPublic });
 }
 
 module.exports = {
