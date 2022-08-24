@@ -13,6 +13,10 @@ const surveySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isPublic: {
+    type: Boolean,
+    default: true,
+  },
   questions: {
     type: [
       {
