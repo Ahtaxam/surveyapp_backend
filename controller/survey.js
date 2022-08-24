@@ -1,14 +1,16 @@
 const Survey = require("../models/survey");
+const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 const joi = require("joi");
 
 // function to get all surveys from database
-const surveys = async (req, res) => {
-  const sureys = await Survey.find({});
+const allSurveys = async (req, res) => {
+  const sureys = await Survey.find({ userId: req.user._id });
   res.status(200).json(sureys);
 };
 
 // function to get survey by id from database
-const survey = async (req, res) => {
+const singleSurvey = async (req, res) => {
   try {
     const survey = await Survey.findById(req.params.id);
     res.status(200).json(survey);
@@ -24,17 +26,19 @@ const createSurvey = async (req, res) => {
     res.status(400).json(result.error.details[0].message);
     return;
   }
+  const { name, description, questions } = req.body;
   const survey = new Survey({
-    name: req.body.name,
-    description: req.body.description,
-    questions: req.body.questions,
+    name,
+    description,
+    questions,
+    userId: req.user._id,
   });
 
   try {
     const newSurvey = await survey.save();
     res.status(201).json({
       message: "Survey created successfully",
-      survey: newSurvey,
+      data: newSurvey,
     });
   } catch (err) {
     res.status(400).json(err.message);
@@ -49,20 +53,21 @@ const updateSurvey = async (req, res) => {
     return;
   }
   try {
-    const survey = await Survey.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          name: req.body.name,
-          description: req.body.description,
-          questions: req.body.questions,
-        },
-      },
-      { new: true }
-    );
+    const survey = await Survey.findById(req.params.id);
+
+    if (!survey) return res.status(404).json({ message: "Survey not found" });
+    if (survey.userId != req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { name, description, questions } = req.body;
+    survey.name = name;
+    survey.description = description;
+    survey.questions = questions;
+    const updatedSurvey = await survey.save();
     res.status(200).json({
       message: "Survey updated successfully",
-      survey: survey,
+      data: updatedSurvey,
     });
   } catch (err) {
     res.status(400).json(err.message);
@@ -72,11 +77,15 @@ const updateSurvey = async (req, res) => {
 // function to delete survey from database
 const deleteSurvey = async (req, res) => {
   try {
-    const survey = await Survey.findByIdAndDelete(req.params.id);
-    res.status(200).json({
-      message: "Survey deleted successfully",
-      survey,
-    });
+    const survey = await Survey.findById(req.params.id);
+
+    if (!survey) return res.status(404).json({ message: "Survey not found" });
+    if (survey.userId != req.user._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    await Survey.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Survey deleted successfully" });
   } catch (err) {
     res.status(400).json(err.message);
   }
@@ -99,7 +108,6 @@ function validateSurvey(survey) {
         options: joi
           .array()
           .items(joi.string())
-          .min(1)
           .when("type", { is: "checkbox", then: joi.required() })
           .when("type", { is: "multiplechoice", then: joi.required() }),
       })
@@ -109,4 +117,10 @@ function validateSurvey(survey) {
   return schema.validate({ name, description, questions });
 }
 
-module.exports = { surveys, createSurvey, survey, deleteSurvey, updateSurvey };
+module.exports = {
+  allSurveys,
+  createSurvey,
+  singleSurvey,
+  deleteSurvey,
+  updateSurvey,
+};
