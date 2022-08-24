@@ -12,7 +12,9 @@ const getAllSurvey = async (req, res) => {
 // function to get survey by id from database
 const getSurvey = async (req, res) => {
   try {
-    const survey = await Survey.findById(req.params.id);
+    const survey = await Survey.findById(req.params.id).select(
+      "-questions._id"
+    );
     res.status(200).json(survey);
   } catch (err) {
     res.status(400).json(err.message);
