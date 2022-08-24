@@ -4,13 +4,13 @@ const config = require("../config/config");
 const joi = require("joi");
 
 // function to get all surveys from database
-const allSurveys = async (req, res) => {
+const getAllSurvey = async (req, res) => {
   const sureys = await Survey.find({ userId: req.user._id });
   res.status(200).json(sureys);
 };
 
 // function to get survey by id from database
-const singleSurvey = async (req, res) => {
+const getSurvey = async (req, res) => {
   try {
     const survey = await Survey.findById(req.params.id);
     res.status(200).json(survey);
@@ -56,9 +56,6 @@ const updateSurvey = async (req, res) => {
     const survey = await Survey.findById(req.params.id);
 
     if (!survey) return res.status(404).json({ message: "Survey not found" });
-    if (survey.userId != req.user._id) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
 
     const { name, description, questions } = req.body;
     survey.name = name;
@@ -80,9 +77,6 @@ const deleteSurvey = async (req, res) => {
     const survey = await Survey.findById(req.params.id);
 
     if (!survey) return res.status(404).json({ message: "Survey not found" });
-    if (survey.userId != req.user._id) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
 
     await Survey.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Survey deleted successfully" });
@@ -118,9 +112,9 @@ function validateSurvey(survey) {
 }
 
 module.exports = {
-  allSurveys,
+  getAllSurvey,
   createSurvey,
-  singleSurvey,
+  getSurvey,
   deleteSurvey,
   updateSurvey,
 };
