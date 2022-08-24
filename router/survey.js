@@ -2,14 +2,14 @@ const express = require("express");
 const route = express.Router();
 
 const Surveys = require("../controller/survey.js");
-const isAuth = require("../middleware/isAuth.js");
+const isAuthorization = require("../middleware/isAuthorization.js");
 
-const { singleSurvey, allSurveys, createSurvey, updateSurvey, deleteSurvey } =
+const { getSurvey, getAllSurvey, createSurvey, updateSurvey, deleteSurvey } =
   Surveys;
-route.get("/", isAuth, allSurveys);
-route.get("/:id", singleSurvey);
-route.post("/", isAuth, createSurvey);
-route.put("/:id", isAuth, updateSurvey);
-route.delete("/:id", isAuth, deleteSurvey);
+route.get("/", getAllSurvey);
+route.get("/:id", getSurvey);
+route.post("/", createSurvey);
+route.put("/:id", isAuthorization, updateSurvey);
+route.delete("/:id", isAuthorization, deleteSurvey);
 
 module.exports = route;
