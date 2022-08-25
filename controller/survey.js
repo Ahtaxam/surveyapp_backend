@@ -5,8 +5,8 @@ const joi = require("joi");
 
 // function to get all surveys from database
 const getAllSurvey = async (req, res) => {
-  const sureys = await Survey.find({ userId: req.user._id });
-  res.status(200).json(sureys);
+  const surveys = await Survey.find({ userId: req.user._id });
+  res.status(200).json(surveys);
 };
 
 // function to get survey by id from database
@@ -61,11 +61,12 @@ const updateSurvey = async (req, res) => {
     if (!survey) return res.status(404).json({ message: "Survey not found" });
 
     const { name, description, questions, isPublic } = req.body;
-    survey.name = name;
-    survey.description = description;
-    survey.questions = questions;
-    survey.isPublic = isPublic;
-    const updatedSurvey = await survey.save();
+    const updatedSurvey = await Survey.findByIdAndUpdate(
+      req.params.id,
+      { name, description, questions, isPublic },
+      { new: true }
+    );
+
     res.status(200).json({
       message: "Survey updated successfully",
       data: updatedSurvey,
