@@ -92,11 +92,10 @@ const deleteSurvey = async (req, res) => {
 
 // joi schema  to validate survey
 function validateSurvey(survey) {
-  const { name, description, questions, isPublic } = survey;
+  const { name, questions, isPublic } = survey;
 
   const schema = joi.object({
     name: joi.string().required(),
-    description: joi.string().required(),
     isPublic: joi.boolean(),
     questions: joi.array().items(
       joi.object({
@@ -114,7 +113,7 @@ function validateSurvey(survey) {
     ),
   });
 
-  return schema.validate({ name, description, questions, isPublic });
+  return schema.validate({ name, questions, isPublic });
 }
 
 module.exports = {
