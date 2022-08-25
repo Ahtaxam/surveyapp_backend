@@ -8,7 +8,7 @@ const signUpUsers = require("./router/user");
 const loginuUser = require("./router/Auth");
 const createSurvey = require("./router/survey");
 const port = process.env.PORT || 8000;
-const url = process.env.dbUrl;
+const url = process.env.DBURL;
 const cors = require("cors");
 const isAuth = require("./middleware/isAuth");
 
