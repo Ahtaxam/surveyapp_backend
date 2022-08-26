@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 
 function isAuth(req, res, next) {
-  const token = req.headers.token;
+  const token = req.headers.config.split(" ")[1];
   if (!token) return res.status(401).send("Access denied. No token provided.");
 
   try {
