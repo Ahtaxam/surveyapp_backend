@@ -21,7 +21,7 @@ const authUser = async (req, res) => {
     }
     const token = jwt.sign({ _id: user._id }, config.jwtPrivateKey);
     res
-      .cookie("express", token, {
+      .cookie("expressToken", token, {
         expire: 360000 + Date.now(),
         httpOnly: false,
       })

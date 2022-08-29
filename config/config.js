@@ -1,6 +1,6 @@
 require("dotenv").config();
 const config = {
-  jwtPrivateKey: process.env.jwtPrivateKey,
+  jwtPrivateKey: process.env.JWTPRIVATEKEY,
 };
 
 module.exports = config;
