@@ -1,7 +1,7 @@
 const Survey = require("../models/survey");
 const response = require("../models/joinSurvey");
 const joi = require("joi");
-const mongoose = require("mongoose");
+const { ObjectId } = require("mongoose").Types;
 
 const validateSurveyAccess = async (req, res, next) => {
   try {
@@ -34,11 +34,11 @@ const submitResponse = async (req, res) => {
   const { surveyId, answers } = req.body;
   const answer = answers.map((answer) => {
       return {
-        questionId: mongoose.Types.ObjectId(answer.questionId),
+        questionId: ObjectId(answer.questionId),
         options: answer.options,
       };
     }),
-    id = mongoose.Types.ObjectId(surveyId);
+    id = ObjectId(surveyId);
   const result = new response({
     userId: req.user._id,
     surveyId: id,
