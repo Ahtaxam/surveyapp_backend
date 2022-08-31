@@ -1,21 +1,21 @@
 const Survey = require("../models/survey");
-const joinSurvey = require("../models/joinSurvey");
+const response = require("../models/joinSurvey");
 const joi = require("joi");
+const mongoose = require("mongoose");
 
-const getJoinSurvey = async (req, res, next) => {
+const validateSurveyAccess = async (req, res, next) => {
   try {
     const survey = await Survey.findById(req.params.id);
     if (!survey.isPublic) {
       return res.status(401).json("You can not access this survey");
     }
 
-    const isFilled = await joinSurvey.find({}).where({
+    const isFilled = await response.find({
       surveyId: req.params.id,
+      userId: req.user._id,
     });
-    for (let i = 0; i < isFilled.length; i++) {
-      if (isFilled[i].userId == req.user._id) {
-        return res.status(401).json("You have already filled this survey");
-      }
+    if (isFilled.length > 0) {
+      return res.status(401).json("You have already filled this survey");
     }
 
     res.status(200).json(survey);
@@ -32,10 +32,17 @@ const submitResponse = async (req, res) => {
   }
 
   const { surveyId, answers } = req.body;
-  const result = new joinSurvey({
+  const answer = answers.map((answer) => {
+      return {
+        questionId: mongoose.Types.ObjectId(answer.questionId),
+        options: answer.options,
+      };
+    }),
+    id = mongoose.Types.ObjectId(surveyId);
+  const result = new response({
     userId: req.user._id,
-    surveyId,
-    answers,
+    surveyId: id,
+    answers: answer,
   });
   try {
     const newSurvey = await result.save();
@@ -66,4 +73,4 @@ function validateJoinSurvey(response) {
   });
   return schema.validate({ surveyId, answers });
 }
-module.exports = { getJoinSurvey, submitResponse };
+module.exports = { validateSurveyAccess, submitResponse };
