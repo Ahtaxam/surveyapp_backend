@@ -1,19 +1,22 @@
+const { string } = require("joi");
 const mongoose = require("mongoose");
 
-const joinSchema = new mongoose.Schema({
+const { Schema, ObjectId } = mongoose;
+
+const responseSchema = new Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: ObjectId,
     ref: "User",
     required: true,
   },
   surveyId: {
-    type: String,
+    type: ObjectId,
   },
   answers: {
     type: [
       {
         questionId: {
-          type: String,
+          type: ObjectId,
           required: true,
         },
         options: {
@@ -26,5 +29,5 @@ const joinSchema = new mongoose.Schema({
   },
 });
 
-const joinSurvey = mongoose.model("JoinSurvey", joinSchema);
-module.exports = joinSurvey;
+const response = mongoose.model("JoinSurvey", responseSchema);
+module.exports = response;
