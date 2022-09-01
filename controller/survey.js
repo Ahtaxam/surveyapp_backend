@@ -1,11 +1,50 @@
 const Survey = require("../models/survey");
+const Responses = require("../models/joinSurvey");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const joi = require("joi");
+const { db } = require("../models/survey");
 
 // function to get all surveys from database
 const getAllSurvey = async (req, res) => {
   const surveys = await Survey.find({ userId: req.user._id });
+  const surveyIds = surveys.map((survey) => survey._id);
+  const responses = await Responses.aggregate([
+    {
+      $match: {
+        surveyId: { $in: surveyIds },
+      },
+    },
+    {
+      $group: { _id: "$surveyId", count: { $sum: 1 } },
+    },
+  ]);
+
+  for (let i = 0; i < surveys.length; i++) {
+    let index = responses.findIndex(
+      (res) => res._id.toString() === surveys[i]._id.toString()
+    );
+    if (index !== -1) {
+      surveys[i] = {
+        _id: surveys[i]._id,
+        name: surveys[i].name,
+        description: surveys[i].description,
+        questions: surveys[i].questions,
+        isPublic: surveys[i].isPublic,
+        response: responses[index].count,
+      };
+    } else {
+      surveys[i] = {
+        _id: surveys[i]._id,
+        name: surveys[i].name,
+        description: surveys[i].description,
+        questions: surveys[i].questions,
+        isPublic: surveys[i].isPublic,
+        response: 0,
+      };
+    }
+  }
+
   res.status(200).json(surveys);
 };
 
