@@ -1,11 +1,33 @@
 const Survey = require("../models/survey");
+const Responses = require("../models/joinSurvey");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const joi = require("joi");
-
+const { ObjectId } = require("mongoose").Types;
 // function to get all surveys from database
 const getAllSurvey = async (req, res) => {
-  const surveys = await Survey.find({ userId: req.user._id });
+  const surveys = JSON.parse(
+    JSON.stringify(await Survey.find({ userId: req.user._id }))
+  );
+  const surveyIds = surveys.map((survey) => ObjectId(survey._id));
+  const responses = await Responses.aggregate([
+    {
+      $match: {
+        surveyId: { $in: surveyIds },
+      },
+    },
+    {
+      $group: { _id: "$surveyId", count: { $sum: 1 } },
+    },
+  ]);
+
+  for (let i = 0; i < surveys.length; i++) {
+    let index = responses.findIndex(
+      (res) => res._id.toString() === surveys[i]._id.toString()
+    );
+    surveys[i].response = index !== -1 ? responses[index].count : 0;
+  }
+
   res.status(200).json(surveys);
 };
 
