@@ -24,22 +24,23 @@ const getAllSurvey = async (req, res) => {
     let index = responses.findIndex(
       (res) => res._id.toString() === surveys[i]._id.toString()
     );
+    const { _id, name, description, questions, isPublic } = surveys[i];
     if (index !== -1) {
       surveys[i] = {
-        _id: surveys[i]._id,
-        name: surveys[i].name,
-        description: surveys[i].description,
-        questions: surveys[i].questions,
-        isPublic: surveys[i].isPublic,
+        _id,
+        name,
+        description,
+        questions,
+        isPublic,
         response: responses[index].count,
       };
     } else {
       surveys[i] = {
-        _id: surveys[i]._id,
-        name: surveys[i].name,
-        description: surveys[i].description,
-        questions: surveys[i].questions,
-        isPublic: surveys[i].isPublic,
+        _id,
+        name,
+        description,
+        questions,
+        isPublic,
         response: 0,
       };
     }
