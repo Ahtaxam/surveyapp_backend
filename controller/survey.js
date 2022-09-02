@@ -3,7 +3,6 @@ const Responses = require("../models/joinSurvey");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const joi = require("joi");
-const { db } = require("../models/survey");
 
 // function to get all surveys from database
 const getAllSurvey = async (req, res) => {
