@@ -1,5 +1,5 @@
 const Survey = require("../models/survey");
-const response = require("../models/joinSurvey");
+const Responses = require("../models/responses");
 const joi = require("joi");
 const { ObjectId } = require("mongoose").Types;
 
@@ -10,7 +10,7 @@ const validateSurveyAccess = async (req, res, next) => {
       return res.status(401).json("You can not access this survey");
     }
 
-    const isFilled = await response.find({
+    const isFilled = await Responses.find({
       surveyId: req.params.id,
       userId: req.user._id,
     });
@@ -39,7 +39,7 @@ const submitResponse = async (req, res) => {
       };
     }),
     id = ObjectId(surveyId);
-  const result = new response({
+  const result = new Responses({
     userId: req.user._id,
     surveyId: id,
     answers: answer,
