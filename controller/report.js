@@ -1,7 +1,8 @@
 const Survey = require("../models/survey");
-const JoinSurvey = require("../models/joinSurvey");
+const Responses = require("../models/responses");
 const fs = require("fs");
-const path = require("path");
+const { stringify } = require("csv-stringify");
+const survey = require("../models/survey");
 
 const report = async (req, res) => {
   let path = __dirname;
@@ -11,11 +12,14 @@ const report = async (req, res) => {
     const survey = await Survey.findById(req.params.id).select(
       "questions -_id"
     );
-    const responses = await JoinSurvey.find({ surveyId: req.params.id }).select(
+    const responses = await Responses.find({ surveyId: req.params.id }).select(
       "answers.options -_id"
     );
 
+
     const writeStream = fs.createWriteStream(path);
+
+
     survey.questions.forEach((question) =>
       writeStream.write(question.title + ",")
     );
