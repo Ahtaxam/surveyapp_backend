@@ -1,5 +1,5 @@
 const Survey = require("../models/survey");
-const Responses = require("../models/joinSurvey");
+const Responses = require("../models/responses");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const joi = require("joi");
