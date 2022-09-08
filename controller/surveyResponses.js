@@ -5,7 +5,7 @@ const surveyResponses = async (req, res) => {
     const surveys = await Responses.find({ surveyId: req.params.id });
     res.status(200).json(surveys);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json("Survey not found");
   }
 };
 
