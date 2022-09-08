@@ -1,7 +1,6 @@
 const Survey = require("../models/survey");
 const Responses = require("../models/responses");
 const fs = require("fs");
-const survey = require("../models/survey");
 
 const report = async (req, res) => {
   let path = __dirname;
@@ -16,12 +15,12 @@ const report = async (req, res) => {
       "answers.options -_id"
     );
 
-    const writeStream = fs.createWriteStream(path);
+    const fd = fs.openSync(path, "w");
 
     survey.questions.forEach((question) =>
-      writeStream.write(question.title + ",")
+      fs.writeSync(fd, question.title + ",")
     );
-    writeStream.write("\n");
+    fs.writeSync(fd, "\n");
 
     for (let i = 0; i < responses.length; i++) {
       for (let j = 0; j < responses[i].answers.length; j++) {
@@ -29,22 +28,12 @@ const report = async (req, res) => {
           responses[i].answers[j].options =
             responses[i].answers[j].options.join(" ");
         }
-        writeStream.write(responses[i].answers[j].options + " ,");
+        fs.writeSync(fd, responses[i].answers[j].options + " ,");
       }
-      writeStream.write("\n");
+      fs.writeSync(fd, "\n");
     }
+    fs.closeSync(fd);
 
-    writeStream.on("finish", () => {
-      console.log(`wrote all the array data to file ${path}`);
-    });
-
-    // handle the errors on the write process
-    writeStream.on("error", (err) => {
-      console.error(`There is an error writing the file ${path} => ${err}`);
-    });
-
-    // close the stream
-    writeStream.end();
     res.status(200).sendFile(path);
   } catch (err) {
     res.status(500).json(err.message);
