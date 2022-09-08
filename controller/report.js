@@ -1,13 +1,13 @@
 const Survey = require("../models/survey");
 const Responses = require("../models/responses");
 const fs = require("fs");
-const { stringify } = require("csv-stringify");
 const survey = require("../models/survey");
 
 const report = async (req, res) => {
   let path = __dirname;
   path = path.replace("controller", "");
   path = path + "assets/report.csv";
+
   try {
     const survey = await Survey.findById(req.params.id).select(
       "questions -_id"
@@ -16,9 +16,7 @@ const report = async (req, res) => {
       "answers.options -_id"
     );
 
-
     const writeStream = fs.createWriteStream(path);
-
 
     survey.questions.forEach((question) =>
       writeStream.write(question.title + ",")
@@ -47,10 +45,10 @@ const report = async (req, res) => {
 
     // close the stream
     writeStream.end();
+    res.status(200).sendFile(path);
   } catch (err) {
     res.status(500).json(err.message);
   }
-  res.status(200).sendFile(path);
 };
 
 module.exports = report;
