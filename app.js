@@ -42,15 +42,12 @@ app.use("/otherSurveys", isAuth, showOtherSurveys);
 app.use("/responses", isAuth, surveyResponses);
 app.use("/download", download);
 app.use("/responsedetail", responseDetail);
+
+app.use(express.static(path.join(__dirname, "/build/")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/build/index.html"));
+});
+
 app.listen(port, () => {
   console.log(`Server is listning on port ${port}`);
 });
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "surveyapp_frontend", "build")));
-  app.get("/*", (req, res) => {
-    res.sendFile(
-      path.join(__dirname, "surveyapp_frontend", "build", "index.html")
-    );
-  });
-}
