@@ -1,0 +1,18 @@
+{
+    "build":[
+        {
+            "src":"./app.js",
+            "use":"@vercel/node"
+        },
+        {
+            "src":"./surveyapp_frontend/build",
+            "use":"@vercel/static"
+        }
+    ],
+    "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "app.js"
+        }
+      ]
+}
