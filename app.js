@@ -44,8 +44,8 @@ app.use("/download", download);
 app.use("/responsedetail", responseDetail);
 
 if (process.env.NODE_ENV === "production") {
-  app.get("*", (req, res) => {
-    app.use(express.static(path.join(__dirname, "/build/")));
+  app.get("/", (req, res) => {
+    app.use(express.static(path.join(__dirname, "/build")));
     res.sendFile(path.join(__dirname, "/build/index.html"));
   });
 }
