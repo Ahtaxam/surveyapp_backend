@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
-const path = require("path");
 const app = express();
 
 const signUpUsers = require("./router/user");
@@ -42,13 +41,6 @@ app.use("/otherSurveys", isAuth, showOtherSurveys);
 app.use("/responses", isAuth, surveyResponses);
 app.use("/download", download);
 app.use("/responsedetail", responseDetail);
-
-if (process.env.NODE_ENV === "production") {
-  app.get("/", (req, res) => {
-    app.use(express.static(path.join(__dirname, "/build")));
-    res.sendFile(path.join(__dirname, "/build/index.html"));
-  });
-}
 
 app.listen(port, () => {
   console.log(`Server is listning on port ${port}`);
