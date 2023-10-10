@@ -33,14 +33,19 @@ mongoose
   .catch(() => {
     console.log("Could not Connect!...");
   });
-app.use("/signup", signUpUsers);
-app.use("/login", loginuUser);
-app.use("/survey", isAuth, createSurvey);
-app.use("/join", isAuth, joinSurvey);
-app.use("/otherSurveys", isAuth, showOtherSurveys);
-app.use("/responses", isAuth, surveyResponses);
-app.use("/download", download);
-app.use("/responsedetail", responseDetail);
+
+app.get("/", (req, res) => {
+  res.send("Hello Seerver!");
+});
+
+app.use("/api/v1/signup", signUpUsers);
+app.use("/api/v1/login", loginuUser);
+app.use("/api/v1/survey", isAuth, createSurvey);
+app.use("/api/v1/join", isAuth, joinSurvey);
+app.use("/api/v1/otherSurveys", isAuth, showOtherSurveys);
+app.use("/api/v1/responses", isAuth, surveyResponses);
+app.use("/api/v1/download", download);
+app.use("/api/v1/responsedetail", responseDetail);
 
 app.listen(port, () => {
   console.log(`Server is listning on port ${port}`);
