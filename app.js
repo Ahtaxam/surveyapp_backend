@@ -25,6 +25,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+mongoose.set('strictQuery', false);
 mongoose
   .connect(url)
   .then(() => {
